@@ -19,6 +19,7 @@ export const render = (domElement, graph, onEventClicked) => {
       onEventClicked(target.data("key"));
     }
   });
+
   const resetSelected = () => {
     const curEles = cy.filter((ele, i) => ele.data("selected"));
     curEles.forEach(element => {

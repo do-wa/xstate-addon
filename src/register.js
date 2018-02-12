@@ -7,8 +7,8 @@ import { build } from "./graphBuilder/statechart";
 
 const styles = {
   cy: {
-    height: "100vh",
-    width: "100vw"
+    height: "100%",
+    width: "100%"
   }
 };
 

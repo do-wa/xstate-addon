@@ -7,10 +7,12 @@ const style = [
       "text-halign": "center",
       "background-color": "white",
       "border-color": ele => {
-        return ele.data("selected") ? "red" : "black";
+        return ele.data("selected")
+          ? "red"
+          : ele.data("isInitial") ? "white" : "black";
       },
       "border-width": 1,
-      shape: "roundrectangle",
+      shape: ele => (ele.data("isInitial") ? "ellipse" : "roundrectangle"),
       label: "data(key)"
     }
   },
@@ -23,7 +25,10 @@ const style = [
       "text-background-color": "#ffffff",
       "target-arrow-color": "black",
       "target-arrow-shape": "triangle",
-      "curve-style": "bezier",
+      "source-arrow-color": "black",
+      "source-arrow-shape": ele => (ele.data("isInitial") ? "circle" : "none"),
+      "curve-style": ele =>
+        ele.data("isInitial") ? "unbundled-bezier" : "bezier",
 
       label: "data(key)"
     }

@@ -6,17 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "build":
+      "parcel build src/register.js -d dist --no-minify && parcel build src/index.js -d dist --no-minify"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/do-wa/xstate-addon.git"
   },
-  "keywords": [
-    "storybook",
-    "addon",
-    "xstate"
-  ],
+  "keywords": ["storybook", "addon", "xstate"],
   "author": "Dominik Walnsch",
   "license": "MIT",
   "bugs": {
@@ -29,17 +27,21 @@
     "@storybook/addons": "^3.3.12",
     "@storybook/react": "^3.3.12",
     "@storybook/ui": "^3.3.0",
-    "babel-core": "^6.26.0",
-    "babel-runtime": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "parcel-bundler": "^1.5.1",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "xstate": "^3.0.4"
   },
   "peerDependencies": {
     "@storybook/addons": "^3.3.0",
     "react": "*"
   },
   "dependencies": {
-    "node-plantuml": "^0.5.0",
-    "plantuml-encoder": "^1.2.5"
+    "cytoscape": "^3.2.8",
+    "cytoscape-cose-bilkent": "^4.0.0",
+    "ramda": "^0.25.0"
   }
 }

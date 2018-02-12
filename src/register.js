@@ -1,59 +1,59 @@
 import React from "react";
 import addons from "@storybook/addons";
+import style from "./cyto/style";
 
-import { convertToPlantUML } from "../xstate-plantuml";
-import plantumlEncoder from "plantuml-encoder";
-import jsonFile from "../xstate-plantuml/on-off.json";
+import { render } from "./cyto";
+import { build } from "./graphBuilder/statechart";
 
 const styles = {
-  notesPanel: {
-    margin: 10,
-    fontFamily: "Arial",
-    fontSize: 14,
-    color: "#444",
+  // cy: {
+  //   display: "flex",
+  //   flexDirection: "row",
+  //   alignItems: "stretch",
+  //   height: "100vh",
+  //   width: "100vw"
+  // }
+  cy: {
     width: "100%",
-    overflow: "auto"
+    height: "100%"
   }
 };
 
-class Notes extends React.Component {
+class XStateGraph extends React.Component {
   constructor(...args) {
     super(...args);
-    this.state = { text: "" };
-    this.onAddNotes = this.onAddNotes.bind(this);
-    debugger;
-    this.plantumlSrc = convertToPlantUML("", jsonFile);
-    var decode = plantumlEncoder.encode(this.plantumlSrc);
-    var url = "http://www.plantuml.com/plantuml/img/" + decode;
+    this.buildGraph = this.buildGraph.bind(this);
+    this.curMachine = "";
   }
 
-  onAddNotes(text) {
-    this.setState({ text });
+  buildGraph({ machine, currentState }) {
+    if (this.curMachine !== machine.id) {
+      this.curMachine = machine.id;
+      this.graph = render(
+        this.cNode,
+        build(machine.states, machine.initial, null, currentState),
+        event => {
+          const { channel } = this.props;
+          channel.emit("xstate/transition", event);
+        }
+      );
+    } else {
+      this.graph.setState(currentState);
+    }
   }
 
   componentDidMount() {
     const { channel, api } = this.props;
-    // Listen to the notes and render it.
-    channel.on("kadira/notes/add_notes", this.onAddNotes);
-
-    // Clear the current notes on every story change.
+    channel.on("xstate/buildGraph", this.buildGraph);
     this.stopListeningOnStory = api.onStory(() => {
-      this.onAddNotes("");
+      this.buildGraph({ machine: {}, currentState: "" });
     });
   }
 
   render() {
-    const { text } = this.state;
-    const textAfterFormatted = text ? text.trim().replace(/\n/g, "<br />") : "";
-    const plantuml = this.plantumlSrc;
-    return (
-      <div style={styles.notesPanel}>
-        {<div dangerouslySetInnerHTML={{ __html: plantuml }} />}
-      </div>
-    );
+    return <div style={styles.cy} id="cy" ref={el => (this.cNode = el)} />;
   }
 
-  // This is some cleanup tasks when the Notes panel is unmounting.
   componentWillUnmount() {
     if (this.stopListeningOnStory) {
       this.stopListeningOnStory();
@@ -61,16 +61,13 @@ class Notes extends React.Component {
 
     this.unmounted = true;
     const { channel, api } = this.props;
-    channel.removeListener("kadira/notes/add_notes", this.onAddNotes);
+    channel.removeListener("xstate/buildGraph", this.buildGraph);
   }
 }
 
-// Register the addon with a unique name.
-addons.register("kadira/notes", api => {
-  debugger;
-  // Also need to set a unique name to the panel.
-  addons.addPanel("kadira/notes/panel", {
-    title: "Notes",
-    render: () => <Notes channel={addons.getChannel()} api={api} />
+addons.register("xstate/machine", api => {
+  addons.addPanel("xstate/machine/graph", {
+    title: "xstate",
+    render: () => <XStateGraph channel={addons.getChannel()} api={api} />
   });
 });

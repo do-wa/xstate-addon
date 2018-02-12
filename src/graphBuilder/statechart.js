@@ -27,7 +27,20 @@ export const build = (states, initial, parent = "", currentState) =>
           selected: state.relativeId === currentState ? true : false,
           hasChildren: childNodes.length ? true : false
         });
-        acc = [node, ...edges, ...childNodes, ...acc];
+        debugger;
+        const initialNode = createNode({
+          key: "",
+          id: createId(parent, "initial"),
+          isInitial: true
+        });
+        const initialEdge = createEdge({
+          id: createId(parent, "initial.edge"),
+          key: "",
+          source: initialNode.data.id,
+          target: createId(parent, states[initial]),
+          parent
+        });
+        acc = [node, initialNode, initialEdge, ...edges, ...childNodes, ...acc];
         return acc;
       },
       [],

@@ -6,9 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "build":
-      "parcel build src/register.js -d dist --no-minify && parcel build src/index.js -d dist --no-minify"
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",

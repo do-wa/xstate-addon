@@ -1,12 +1,12 @@
-const R = require("ramda");
-import { createNode, createEdge, createId } from "./utils";
+const R = require('ramda');
+import { createNode, createEdge, createId } from './utils';
 
-export const build = (states, initial, parent = "", currentState) =>
+export const build = (states, initial, parent = '', currentState) =>
   R.flatten(
     R.reduce(
       (acc, stateKey) => {
         const state = states[stateKey];
-        const childNodes = R.has("states", state)
+        const childNodes = R.has('states', state)
           ? build(state.states, state.initial, stateKey, currentState)
           : [];
         const edges = R.map(

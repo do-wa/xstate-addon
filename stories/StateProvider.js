@@ -1,5 +1,5 @@
-import React from "react";
-import addons from "@storybook/addons";
+import React from 'react';
+import addons from '@storybook/addons';
 
 export default class StateProvider extends React.Component {
   constructor(props) {

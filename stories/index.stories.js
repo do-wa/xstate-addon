@@ -1,43 +1,43 @@
-import React from "react";
-import { Machine } from "xstate";
+import React from 'react';
+import { Machine } from 'xstate';
 
-import { storiesOf } from "@storybook/react";
-import { action } from "@storybook/addon-actions";
-import { linkTo } from "@storybook/addon-links";
-import { WithXStateGraph } from "../src/";
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+import { linkTo } from '@storybook/addon-links';
+import { WithXStateGraph } from '../src/';
 
-import { Button, Welcome } from "@storybook/react/demo";
-import TrafficLight from "./TrafficLight";
-import StateProvider from "./StateProvider";
+import { Button, Welcome } from '@storybook/react/demo';
+import TrafficLight from './TrafficLight';
+import StateProvider from './StateProvider';
 
 const lightMachine = Machine({
-  id: "light",
-  initial: "green",
+  id: 'light',
+  initial: 'green',
   states: {
     green: {
       on: {
-        TIMER: "yellow"
+        TIMER: 'yellow'
       }
     },
     yellow: {
       on: {
-        TIMER: "red"
+        TIMER: 'red'
       }
     },
     red: {
       on: {
-        TIMER: "green"
+        TIMER: 'green'
       },
-      initial: "walk",
+      initial: 'walk',
       states: {
         walk: {
           on: {
-            PED_TIMER: "wait"
+            PED_TIMER: 'wait'
           }
         },
         wait: {
           on: {
-            PED_TIMER: "stop"
+            PED_TIMER: 'stop'
           }
         },
         stop: {}
@@ -46,11 +46,11 @@ const lightMachine = Machine({
   }
 });
 
-storiesOf("Welcome", module).add("to Storybook", () => (
-  <Welcome showApp={linkTo("Button")} />
+storiesOf('Welcome', module).add('to Storybook', () => (
+  <Welcome showApp={linkTo('Button')} />
 ));
 
-storiesOf("LightMachine", module).add("Example", () => {
+storiesOf('LightMachine', module).add('Example', () => {
   return (
     <StateProvider
       machine={lightMachine}
@@ -59,7 +59,7 @@ storiesOf("LightMachine", module).add("Example", () => {
           {JSON.stringify(currentState)}
           <WithXStateGraph
             machine={lightMachine}
-            onEvent={onEvent}
+            onTransition={onEvent}
             currentState={currentState}
           >
             <TrafficLight light={currentState} />

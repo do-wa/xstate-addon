@@ -1,13 +1,13 @@
 export const createNode = data => ({
-  group: "nodes",
+  group: 'nodes',
   data: {
     ...data
   }
 });
 export const createEdge = data => ({
-  group: "edges",
+  group: 'edges',
   data: {
     ...data
   }
 });
-export const createId = (parent, id) => `${parent ? `${parent}.` : ""}${id}`;
+export const createId = (parent, id) => `${parent ? `${parent}.` : ''}${id}`;

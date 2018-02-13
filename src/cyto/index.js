@@ -1,40 +1,40 @@
-import c from "cytoscape";
-import coseBilkent from "cytoscape-cose-bilkent";
+import c from 'cytoscape';
+import coseBilkent from 'cytoscape-cose-bilkent';
 
-import layout from "./layout";
-import style from "./style";
+import layout from './layout';
+import style from './style';
 
 c.use(coseBilkent);
-
+let cy;
 export const render = (domElement, graph, onEventClicked) => {
-  const cy = c({
+  cy = c({
     container: domElement,
     layout,
     elements: graph,
     style
   });
-  cy.on("tap", evt => {
+  cy.on('tap', evt => {
     const target = evt.target;
-    if (target.group && target.group() === "edges") {
-      onEventClicked(target.data("key"));
+    if (target.group && target.group() === 'edges') {
+      onEventClicked(target.data('key'));
     }
   });
   const resetSelected = () => {
-    const curEles = cy.filter((ele, i) => ele.data("selected"));
+    const curEles = cy.filter((ele, i) => ele.data('selected'));
     curEles.forEach(element => {
-      element.data("selected", false);
-      element.style("border-color", "black");
+      element.data('selected', false);
+      element.style('border-color', 'black');
     });
   };
   const setAsSelected = id => {
     const nextEl = cy.getElementById(id);
-    nextEl.style("border-color", "red");
-    nextEl.data("selected", true);
+    nextEl.style('border-color', 'red');
+    nextEl.data('selected', true);
   };
   return {
     setState(next) {
       resetSelected();
-      if (typeof next === "string") {
+      if (typeof next === 'string') {
         setAsSelected(next);
       } else {
         const nextEles = Object.keys(next);
@@ -43,6 +43,10 @@ export const render = (domElement, graph, onEventClicked) => {
           setAsSelected(`${key}.${next[key]}`);
         });
       }
+    },
+    resize() {
+      cy.resize();
+      cy.fit();
     }
   };
 };

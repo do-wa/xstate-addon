@@ -1,5 +1,5 @@
 const layout = {
-  name: "cose-bilkent",
+  name: 'cose-bilkent',
   randomize: true,
   idealEdgeLength: 70,
   animate: false

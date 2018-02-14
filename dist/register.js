@@ -56,7 +56,7 @@ var XStateGraph = function (_React$Component) {
   _createClass(XStateGraph, [{
     key: 'resizeGraph',
     value: function resizeGraph() {
-      this.graph.resize();
+      if (this.graph) this.graph.resize();
     }
   }, {
     key: 'buildGraph',
@@ -66,38 +66,37 @@ var XStateGraph = function (_React$Component) {
       var machine = _ref2.machine,
           currentState = _ref2.currentState;
 
-      if (this.curMachine !== machine.id) {
-        this.curMachine = machine.id;
-        this.graph = (0, _cyto.render)(this.cNode, (0, _statechart.build)(machine.states, machine.initial, null, currentState), function (event) {
-          var channel = _this2.props.channel;
+      if (machine && currentState) {
+        if (this.curMachine !== machine.id) {
+          this.curMachine = machine.id;
+          this.graph = (0, _cyto.render)(this.cNode, (0, _statechart.build)(machine.states, machine.initial, null, currentState), function (event) {
+            var channel = _this2.props.channel;
 
-          channel.emit('xstate/transition', event);
-        });
-      } else {
-        this.graph.setState(currentState);
+            channel.emit('xstate/transition', event);
+          });
+        } else {
+          this.graph.setState(currentState);
+        }
       }
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      this.resizeGraph();
     }
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this3 = this;
-
       var _props = this.props,
           channel = _props.channel,
           api = _props.api;
 
       channel.on('xstate/buildGraph', this.buildGraph);
       channel.on('xstate/resize', this.resizeGraph);
-      this.stopListeningOnStory = api.onStory(function () {
-        _this3.buildGraph({ machine: {}, currentState: '' });
-      });
     }
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      if (this.stopListeningOnStory) {
-        this.stopListeningOnStory();
-      }
       this.unmounted = true;
       var _props2 = this.props,
           channel = _props2.channel,
@@ -105,15 +104,15 @@ var XStateGraph = function (_React$Component) {
 
       channel.removeListener('xstate/buildGraph', this.buildGraph);
       channel.removeListener('xstate/resize', this.resizeGraph);
-      window.removeEventListener('localDataStorage');
+      this.graph.remove();
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this;
+      var _this3 = this;
 
       return _react2.default.createElement('div', { style: styles.cy, id: 'cy', ref: function ref(el) {
-          return _this4.cNode = el;
+          return _this3.cNode = el;
         } });
     }
   }]);

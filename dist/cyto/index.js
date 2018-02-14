@@ -26,6 +26,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 _cytoscape2.default.use(_cytoscapeCoseBilkent2.default);
 var cy = void 0;
 var render = exports.render = function render(domElement, graph, onEventClicked) {
+  if (cy) {
+    cy.remove();
+  }
   cy = (0, _cytoscape2.default)({
     container: domElement,
     layout: _layout2.default,
@@ -38,6 +41,7 @@ var render = exports.render = function render(domElement, graph, onEventClicked)
       onEventClicked(target.data('key'));
     }
   });
+
   var resetSelected = function resetSelected() {
     var curEles = cy.filter(function (ele, i) {
       return ele.data('selected');
@@ -68,6 +72,9 @@ var render = exports.render = function render(domElement, graph, onEventClicked)
     resize: function resize() {
       cy.resize();
       cy.fit();
+    },
+    remove: function remove() {
+      cy.remove();
     }
   };
 };

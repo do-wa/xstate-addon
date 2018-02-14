@@ -7,6 +7,9 @@ import style from './style';
 c.use(coseBilkent);
 let cy;
 export const render = (domElement, graph, onEventClicked) => {
+  if (cy) {
+    cy.remove();
+  }
   cy = c({
     container: domElement,
     layout,
@@ -19,6 +22,7 @@ export const render = (domElement, graph, onEventClicked) => {
       onEventClicked(target.data('key'));
     }
   });
+
   const resetSelected = () => {
     const curEles = cy.filter((ele, i) => ele.data('selected'));
     curEles.forEach(element => {
@@ -47,6 +51,9 @@ export const render = (domElement, graph, onEventClicked) => {
     resize() {
       cy.resize();
       cy.fit();
+    },
+    remove() {
+      cy.remove();
     }
   };
 };

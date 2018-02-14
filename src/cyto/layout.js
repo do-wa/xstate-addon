@@ -1,7 +1,7 @@
 const layout = {
   name: 'cose-bilkent',
   randomize: true,
-  idealEdgeLength: 70,
+  idealEdgeLength: 130,
   animate: false
 };
 export default layout;

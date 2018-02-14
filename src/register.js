@@ -21,42 +21,40 @@ class XStateGraph extends React.Component {
   }
 
   resizeGraph() {
-    this.graph.resize();
+    if (this.graph) this.graph.resize();
   }
   buildGraph({ machine, currentState }) {
-    if (this.curMachine !== machine.id) {
-      this.curMachine = machine.id;
-      this.graph = render(
-        this.cNode,
-        build(machine.states, machine.initial, null, currentState),
-        event => {
-          const { channel } = this.props;
-          channel.emit('xstate/transition', event);
-        }
-      );
-    } else {
-      this.graph.setState(currentState);
+    if (machine && currentState) {
+      if (this.curMachine !== machine.id) {
+        this.curMachine = machine.id;
+        this.graph = render(
+          this.cNode,
+          build(machine.states, machine.initial, null, currentState),
+          event => {
+            const { channel } = this.props;
+            channel.emit('xstate/transition', event);
+          }
+        );
+      } else {
+        this.graph.setState(currentState);
+      }
     }
   }
-
+  componentDidUpdate() {
+    this.resizeGraph();
+  }
   componentDidMount() {
     const { channel, api } = this.props;
     channel.on('xstate/buildGraph', this.buildGraph);
     channel.on('xstate/resize', this.resizeGraph);
-    this.stopListeningOnStory = api.onStory(() => {
-      this.buildGraph({ machine: {}, currentState: '' });
-    });
   }
 
   componentWillUnmount() {
-    if (this.stopListeningOnStory) {
-      this.stopListeningOnStory();
-    }
     this.unmounted = true;
     const { channel, api } = this.props;
     channel.removeListener('xstate/buildGraph', this.buildGraph);
     channel.removeListener('xstate/resize', this.resizeGraph);
-    window.removeEventListener('localDataStorage');
+    this.graph.remove();
   }
 
   render() {

@@ -6,6 +6,8 @@ Everyone who is interested in bringing this project forward is welcome to contri
 
 ## install
 
+!! storybook version: 3.3.0 !!
+
 ```javascript
 npm i storybook-addon-xstate -D
 ```

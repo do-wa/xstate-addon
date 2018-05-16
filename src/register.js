@@ -27,17 +27,12 @@ class XStateGraph extends React.Component {
     if (machine && currentState) {
       if (this.curMachine !== machine.id) {
         this.curMachine = machine.id;
-        this.graph = render(
-          this.cNode,
-          build(machine.states, machine.initial, null, currentState),
-          event => {
-            const { channel } = this.props;
-            channel.emit('xstate/transition', event);
-          }
-        );
-      } else {
-        this.graph.setState(currentState);
+        this.graph = render(this.cNode, build(machine, currentState), event => {
+          const { channel } = this.props;
+          channel.emit('xstate/transition', event);
+        });
       }
+      this.graph.setState(currentState);
     }
   }
   componentDidUpdate() {

@@ -44,7 +44,7 @@ export const render = (domElement, graph, onEventClicked) => {
         const nextEles = Object.keys(next);
         nextEles.forEach(key => {
           setAsSelected(key);
-          setAsSelected(`${key}.${next[key]}`);
+          setAsSelected(next[key]);
         });
       }
     },

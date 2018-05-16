@@ -1,58 +1,83 @@
-const R = require('ramda');
-import { createNode, createEdge, createId } from './utils';
+import { getNodes } from 'xstate/lib/graph';
+import { getActionType } from 'xstate/lib/utils';
+const getEdges = node => {
+  const edges = [];
+  if (node.states) {
+    Object.keys(node.states).forEach(stateKey => {
+      edges.push(...getEdges(node.states[stateKey]));
+    });
+  }
 
-export const build = (
-  states,
-  initial,
-  parent = '',
-  currentState,
-  initialSet = false
-) =>
-  R.flatten(
-    R.reduce(
-      (acc, stateKey) => {
-        const state = states[stateKey];
-        const childNodes = R.has('states', state)
-          ? build(state.states, state.initial, stateKey, currentState, false)
-          : [];
-        const edges = R.map(
-          edgeKey =>
-            createEdge({
-              id: createId(stateKey, edgeKey),
-              key: edgeKey,
-              parent,
-              source: state.relativeId,
-              target: createId(parent, state.on[edgeKey])
-            }),
-          R.keysIn(state.on)
-        );
-        const node = createNode({
-          key: stateKey,
-          id: state.relativeId,
-          parent,
-          selected: state.relativeId === currentState ? true : false,
-          hasChildren: childNodes.length ? true : false
-        });
-        if (!initialSet) {
-          const initialNode = createNode({
-            id: createId(parent, 'initial'),
-            isInitial: true,
-            parent
-          });
-          const initialEdge = createEdge({
-            id: createId(parent, 'initial.edge'),
-            source: initialNode.data.id,
-            target: createId(parent, initial),
-            isInitial: true,
-            parent
-          });
-          initialSet = true;
-          acc = [initialNode, initialEdge, ...acc];
-        }
-        acc = [node, ...edges, ...childNodes, ...acc];
-        return acc;
-      },
-      [],
-      R.keysIn(states)
-    )
-  );
+  Object.keys(node.on || {}).forEach(event => {
+    edges.push(...getEventNodes(node, event));
+  });
+  return edges;
+};
+
+const getEventNodes = (node, event) => {
+  const transitions = node.on[event] || [];
+
+  return transitions.map(transition => {
+    return {
+      group: 'edges',
+      data: {
+        id: `${node.key}${event}`,
+        source: node.key,
+        target: transition.target,
+        key: event,
+
+        actions: transition.actions
+          ? getActionType(transition.actions.map(getActionType))
+          : []
+      }
+    };
+  });
+};
+
+const createInitialNodes = (node, parent = '') => {
+  let newNodes = [];
+  if (node.initial) {
+    newNodes.push({
+      group: 'nodes',
+      data: {
+        id: `${node.key}.initial`,
+        parent,
+        isInitial: true
+      }
+    });
+    newNodes.push({
+      group: 'edges',
+      data: {
+        isInitial: true,
+        id: `${node.key}.initial.edge`,
+        source: `${node.key}.initial`,
+        target: `${node.initial}`,
+        parent
+      }
+    });
+  }
+  return newNodes;
+};
+
+export const build = (machine, currentState) => {
+  const nodes = getNodes(machine);
+  const graphNodes = nodes.reduce((acc, node, idx) => {
+    const { path, key } = node;
+    let parent = path.length > 1 ? path[path.length - 2] : '';
+    acc.push(...createInitialNodes(node, node.key));
+    acc.push(...getEdges(node));
+    acc.push({
+      group: 'nodes',
+      data: {
+        path,
+        id: key,
+        key,
+        parent,
+        hasChildren: Object.keys(node.states).length
+      }
+    });
+    return acc;
+  }, []);
+  graphNodes.push(...createInitialNodes({ initial: machine.initial, key: '' }));
+  return graphNodes;
+};

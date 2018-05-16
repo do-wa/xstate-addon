@@ -4,11 +4,11 @@ import { Machine } from 'xstate';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
-import { WithXStateGraph } from 'storybook-addon-xstate';
+import { WithXStateGraph } from '../src/index';
 
 import { Button, Welcome } from '@storybook/react/demo';
-import TrafficLight from '../helper/TrafficLight';
-import StateProvider from '../helper/StateProvider';
+import TrafficLight from './helper/TrafficLight';
+import StateProvider from './helper/StateProvider';
 
 const lightMachine = Machine({
   id: 'light',

@@ -65,7 +65,7 @@ var render = exports.render = function render(domElement, graph, onEventClicked)
         var nextEles = Object.keys(next);
         nextEles.forEach(function (key) {
           setAsSelected(key);
-          setAsSelected(key + '.' + next[key]);
+          setAsSelected(next[key]);
         });
       }
     },

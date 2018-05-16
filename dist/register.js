@@ -69,14 +69,13 @@ var XStateGraph = function (_React$Component) {
       if (machine && currentState) {
         if (this.curMachine !== machine.id) {
           this.curMachine = machine.id;
-          this.graph = (0, _cyto.render)(this.cNode, (0, _statechart.build)(machine.states, machine.initial, null, currentState), function (event) {
+          this.graph = (0, _cyto.render)(this.cNode, (0, _statechart.build)(machine, currentState), function (event) {
             var channel = _this2.props.channel;
 
             channel.emit('xstate/transition', event);
           });
-        } else {
-          this.graph.setState(currentState);
         }
+        this.graph.setState(currentState);
       }
     }
   }, {

@@ -1,3 +1,7 @@
+# WARNING
+
+this project is not actively developed, not tested and based on xstate v3.2 and storybook v3.4
+
 # xstate-addon
 A storybook addon project for xstate (https://github.com/davidkpiano/xstate)
 
